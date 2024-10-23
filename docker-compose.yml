@@ -5,6 +5,8 @@ services:
     image: credentials-store
     expose:
       - "8080"
+    ports:      
+      - "5006:5006"
   token-store:
     image: token-store
     expose:
@@ -19,6 +21,7 @@ services:
     image: login-server
     ports:
       - "8080:8080"
+      - "5005:5005"
     depends_on:
       - jwt-server
       - credentials-store

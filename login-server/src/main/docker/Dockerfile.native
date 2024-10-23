@@ -1,11 +1,16 @@
-FROM registry.access.redhat.com/ubi8/ubi-minimal
+FROM adoptopenjdk/openjdk11:ubi-minimal-jre
 WORKDIR /work/
-COPY target/*-runner /work/application
+COPY target/lib /work/lib
+COPY target/*-runner.jar /work/application.jar
+ENV JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
 RUN chmod 775 /work
 EXPOSE 8080
-CMD ["./application", \
+EXPOSE 5005
+CMD ["java", \
     "-Dquarkus.http.host=0.0.0.0", \
     "-Dquarkus.http.port=8080", \
     "-Dde.dopler.ms.login_server.services.external.TokenService/mp-rest/url=http://jwt-server:8080", \
-    "-Dde.dopler.ms.login_server.services.external.CredentialsStoreService/mp-rest/url=http://credentials-store:8080" \
+    "-Dde.dopler.ms.login_server.services.external.CredentialsStoreService/mp-rest/url=http://credentials-store:8080", \
+    "-jar", \
+    "./application.jar" \
 ]
