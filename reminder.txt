@@ -6,21 +6,21 @@
     "configurations": [                                
         {
             "type": "java",
-            "name": "Attach login server local",
+            "name": "Attach",
             "request": "attach",
             "hostName": "localhost",
             "port": "5007"
         },
         {
             "type": "java",
-            "name": "Debugging docker login server",
+            "name": "Debugging docker",
             "request": "attach",
             "hostName": "localhost",
             "port": "5005",
         },
         {
             "type": "java",
-            "name": "Debugging docker credential store",
+            "name": "Debugging docker1",
             "request": "attach",
             "hostName": "localhost",
             "port": "5006",
@@ -29,7 +29,8 @@
     "compounds": [
      {
          "name": "Compound",
-         "configurations": ["Debugging docker login server","Debugging docker credential store"]
+         "configurations": ["Debugging docker","Debugging docker1"]
      }
  ]
 }
+java -jar -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007 login-server-runner.jar
