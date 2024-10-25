@@ -7,8 +7,8 @@ EXPOSE 8080
 CMD ["java", \
     "-Dquarkus.http.host=0.0.0.0", \
     "-Dquarkus.http.port=8080", \
-    "-Dde.dopler.ms.login_server.services.external.TokenService/mp-rest/url=http://jwt-server:8080", \
-    "-Dde.dopler.ms.login_server.services.external.CredentialsStoreService/mp-rest/url=http://credentials-store:8080", \
+    "-Dauth.ms.login_server.services.external.TokenService/mp-rest/url=http://jwt-server:8080", \
+    "-Dauth.ms.login_server.services.external.CredentialsStoreService/mp-rest/url=http://credentials-store:8080", \
     "-jar", \
     "./application.jar" \
 ]

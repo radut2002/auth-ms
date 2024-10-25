@@ -7,7 +7,7 @@ EXPOSE 8080
 CMD ["java", \
     "-Dquarkus.http.host=0.0.0.0", \
     "-Dquarkus.http.port=8080", \
-    "-Dde.dopler.ms.jwt_server.services.external.TokenStoreService/mp-rest/url=http://token-store:8080", \
+    "-Dauth.ms.jwt_server.services.external.TokenStoreService/mp-rest/url=http://token-store:8080", \
     "-jar", \
     "./application.jar" \
 ]
