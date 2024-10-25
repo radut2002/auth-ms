@@ -4,6 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [                                
+
         {
             "type": "java",
             "name": "Attach login server local",
@@ -24,12 +25,19 @@
             "request": "attach",
             "hostName": "localhost",
             "port": "5006",
+        },
+        {
+            "type": "java",
+            "name": "Debugging docker jwt server",
+            "request": "attach",
+            "hostName": "localhost",
+            "port": "5007",
         }
     ],
     "compounds": [
      {
          "name": "Compound",
-         "configurations": ["Debugging docker login server","Debugging docker credential store"]
+         "configurations": ["Debugging docker login server","Debugging docker credential store", "Debugging docker jwt server"]
      }
  ]
 }

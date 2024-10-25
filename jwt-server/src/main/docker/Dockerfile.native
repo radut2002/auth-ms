@@ -2,6 +2,7 @@ FROM adoptopenjdk/openjdk11:ubi-minimal-jre
 WORKDIR /work/
 COPY target/lib /work/lib
 COPY target/*-runner.jar /work/application.jar
+ENV JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007"
 RUN chmod 775 /work
 EXPOSE 8080
 CMD ["java", \

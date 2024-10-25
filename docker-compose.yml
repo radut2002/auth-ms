@@ -15,6 +15,8 @@ services:
     image: jwt-server
     expose:
       - "8080"
+    ports:      
+      - "5007:5007"
     depends_on:
       - token-store
   login-server:
