@@ -21,6 +21,9 @@ public class GatewayConfig {
                 .route("auth-service", r -> r.path("/auth/**")                       
                         .filters(f -> f.filter(authenticationFilter))                      
                         .uri("http://login-server:8080"))
+                .route("customer-service", r -> r.path("/api/**")                       
+                        .filters(f -> f.filter(authenticationFilter))                      
+                        .uri("http://customer-service:8087"))
                         .build();           
     }
 

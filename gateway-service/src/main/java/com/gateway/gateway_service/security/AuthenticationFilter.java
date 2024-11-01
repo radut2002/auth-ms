@@ -1,24 +1,33 @@
 package com.gateway.gateway_service.security;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+
 import reactor.core.publisher.Mono;
 
+@RefreshScope
 @Component
 public class AuthenticationFilter implements GatewayFilter {
 
     @Autowired
     private RouterValidator routerValidator;
     
-    
+
     @Value("${jwt.prefix}")
     public String TOKEN_PREFIX;
 
@@ -27,19 +36,26 @@ public class AuthenticationFilter implements GatewayFilter {
         ServerHttpRequest request = exchange.getRequest();
 
         if (routerValidator.isSecured.test(request)) {
-            if (this.isAuthMissing(request) || this.isPrefixMissing(request))
-                return this.onError(exchange, "Authorization header is missing in request", HttpStatus.UNAUTHORIZED);
+            if (this.IsCookieWithTokenExist(request, TOKEN_PREFIX))
+                return this.onError(exchange, String.format("Cookie %s is missing in request", TOKEN_PREFIX), HttpStatus.UNAUTHORIZED);
 
-            final String token = this.getAuthHeader(request);
-           
-
-            this.populateRequestWithHeaders(exchange, token);
+            final String token = this.getCookieValue(request, TOKEN_PREFIX);
+            if (token != null ) {
+                final DecodedJWT validatedJWT;
+                      
+                try {
+                    validatedJWT = JWT.decode(token);               
+                } catch (JWTDecodeException e) {
+                    return this.onError(exchange, e.getMessage(), HttpStatus.UNAUTHORIZED);
+                }     
+                
+                if (!isJWTExpired(validatedJWT)) {
+                    this.populateRequestWithHeaders(exchange);
+                }
+            }            
         }
         return chain.filter(exchange);
     }
-
-
-    /*PRIVATE*/
 
     private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
         ServerHttpResponse response = exchange.getResponse();
@@ -47,26 +63,25 @@ public class AuthenticationFilter implements GatewayFilter {
         return response.setComplete();
     }
 
-    private String getAuthHeader(ServerHttpRequest request) {
-        var header = request.getHeaders().getOrEmpty("Authorization").get(0);
-        return header.replace(TOKEN_PREFIX,"").trim();
-    }
-
-    private boolean isAuthMissing(ServerHttpRequest request) {
-        return !request.getHeaders().containsKey("Authorization");
-    }
-
-    private boolean isPrefixMissing(ServerHttpRequest request) {
-        var header = request.getHeaders().getFirst ("Authorization");
-        assert header != null;
-        return !header.startsWith(TOKEN_PREFIX);
-    }
-
-    private void populateRequestWithHeaders(ServerWebExchange exchange, String token) {
-        //Claims claims = jwtUtil.getAllClaimsFromToken(token);
+    private void populateRequestWithHeaders(ServerWebExchange exchange) {        
         exchange.getRequest().mutate()
-                .header("Authorization", token)
-                .build();
+            .header(HttpHeaders.SET_COOKIE, getCookieValue(exchange.getRequest(), TOKEN_PREFIX)).build();
     }
 
+    private boolean isJWTExpired(DecodedJWT decodedJWT) {
+        Date expiresAt = decodedJWT.getExpiresAt();
+        return expiresAt.before(new Date());
+    }
+
+    private String getCookieValue(ServerHttpRequest req, String cookieName) {
+        return req.getCookies()
+                .getFirst(cookieName)
+                .getValue();
+    }
+
+    private boolean  IsCookieWithTokenExist(ServerHttpRequest req, String cookieName) {
+        var cookie =  req.getCookies()
+        .getFirst(cookieName);
+       return cookie == null;
+    }
 }

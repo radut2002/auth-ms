@@ -2,7 +2,7 @@ server:
   port: 8086
 
 jwt:
-  prefix: Bearer
+  prefix: r_token
 
 spring:
   application:
@@ -12,3 +12,5 @@ spring:
       discovery:
         locator:
           enabled: true
+
+          
