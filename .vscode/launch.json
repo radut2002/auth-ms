@@ -33,11 +33,19 @@
             "hostName": "localhost",
             "port": "5007",
         }
+        ,
+        {
+            "type": "java",
+            "name": "Debugging docker gateway service",
+            "request": "attach",
+            "hostName": "localhost",
+            "port": "5008",
+        }
     ],
     "compounds": [
      {
          "name": "Compound",
-         "configurations": ["Debugging docker login server","Debugging docker credential store", "Debugging docker jwt server"]
+         "configurations": ["Debugging docker login server","Debugging docker credential store", "Debugging docker jwt server", "Debugging docker gateway service"]
      }
  ]
 }

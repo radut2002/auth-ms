@@ -1,24 +1,30 @@
 package auth.ms.login_server;
 
-import auth.ms.login_server.domain.AuthData;
-import auth.ms.login_server.services.external.TokenService;
-import auth.ms.login_server.utils.PasswordHashUtils;
-import auth.ms.response_utils.ResponseUtils;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-
-import auth.ms.login_server.domain.Credentials;
-import auth.ms.login_server.domain.User;
-import auth.ms.login_server.services.external.CredentialsStoreService;
+import java.util.Collections;
 
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.CookieParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import static auth.ms.server_timings.filter.AbstractServerTimingResponseFilter.SERVER_TIMING_HEADER_NAME;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import java.util.Collections;
+import auth.ms.login_server.domain.AuthData;
+import auth.ms.login_server.domain.Credentials;
+import auth.ms.login_server.domain.User;
+import auth.ms.login_server.services.external.CredentialsStoreService;
+import auth.ms.login_server.services.external.TokenService;
+import auth.ms.login_server.utils.PasswordHashUtils;
+import auth.ms.response_utils.ResponseUtils;
+import static auth.ms.server_timings.filter.AbstractServerTimingResponseFilter.SERVER_TIMING_HEADER_NAME;
+import io.quarkus.security.Authenticated;
 
 @Path("/auth")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -117,6 +123,20 @@ public class AuthResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response refresh(@CookieParam("r_token") String jwtCookie) {
         return tokenService.fromRefreshToken(jwtCookie);
+    }
+
+
+    @GET
+    @Path("/verifytest")
+    @Produces(MediaType.TEXT_PLAIN)
+    @Authenticated
+    public Response verify(@CookieParam("r_token") String jwtCookie) {
+        try {
+            return tokenService.verifyToken(jwtCookie);            
+            
+        } catch (IllegalStateException e) {
+            return ResponseUtils.status(Status.INTERNAL_SERVER_ERROR);
+        }        
     }
 
     private static void delayResponse() {

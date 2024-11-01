@@ -27,3 +27,8 @@ services:
     depends_on:
       - jwt-server
       - credentials-store
+  gateway-service:
+    image: gateway-service
+    ports:
+      - "8086:8086"
+      - "5008:5008"

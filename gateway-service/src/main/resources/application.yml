@@ -1,0 +1,14 @@
+server:
+  port: 8086
+
+jwt:
+  prefix: Bearer
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
