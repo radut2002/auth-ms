@@ -5,7 +5,6 @@ import java.util.Set;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -26,6 +25,7 @@ import auth.ms.jwt_server.utils.RefreshTokenUtils;
 import auth.ms.response_utils.RefreshTokenCookie;
 import auth.ms.response_utils.ResponseUtils;
 import io.smallrye.jwt.auth.principal.JWTParser;
+
 import static auth.ms.jwt_server.utils.GenerateTokenUtils.EXPIRATION_REFRESH_TOKEN;
 import static auth.ms.server_timings.filter.AbstractServerTimingResponseFilter.SERVER_TIMING_HEADER_NAME;
 
@@ -39,15 +39,13 @@ public class VerifyTokenResource {
     @ConfigProperty(name = "mp.jwt.verify.issuer")
     String issuer;
     
-    private JsonWebToken jwt;
-    private JWTParser parser;
+    private final JsonWebToken jwt;
     private final TokenStoreService tokenStoreService;
 
     @SuppressWarnings("CdiInjectionPointsInspection")
     @Inject
-    public VerifyTokenResource(JsonWebToken jwt, JWTParser parser, @RestClient TokenStoreService tokenStoreService) {
-        this.jwt = jwt;
-        this.parser = parser;
+    public VerifyTokenResource(JsonWebToken jwt, @RestClient TokenStoreService tokenStoreService) {
+        this.jwt = jwt;        
         this.tokenStoreService = tokenStoreService;
     }
 
@@ -71,9 +69,8 @@ public class VerifyTokenResource {
             return ResponseUtils.textResponse(Status.BAD_REQUEST,
                     "userId inside upn cannot be parsed");
         }
-
-         var tokenHash = RefreshTokenUtils.toSha256Hash(jwt.getRawToken());
-        var groupsResponse = tokenStoreService.popGroups(userId, tokenHash);
+         
+        var groupsResponse = tokenStoreService.popGroups(userId, jwt.getRawToken());
         var timingGetGroups = groupsResponse.getHeaderString(SERVER_TIMING_HEADER_NAME);
 
         // if no groups were found (404), the JWT info was deleted inside the token store
@@ -87,8 +84,8 @@ public class VerifyTokenResource {
         if (groupsResponse.getStatusInfo().getFamily() == Status.Family.SERVER_ERROR) {
             return ResponseUtils.status(Status.INTERNAL_SERVER_ERROR);
         }
-        var groups = groupsResponse.readEntity(new GenericType<Set<String>>() {});
 
+         var groups = groupsResponse.readEntity(new GenericType<Set<String>>() {});
         var tokens = GenerateTokenUtils.generateJwtTokens(userId, groups);
         var newTokenHash = RefreshTokenUtils.toSha256Hash(tokens.refreshToken);
 

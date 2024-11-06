@@ -127,13 +127,8 @@ public class AuthResource {
     @POST
     @Path("/verify")
     @Produces(MediaType.TEXT_PLAIN)    
-    public Response verify(@CookieParam("r_token") String jwtCookie) {
-        try {
-            return tokenService.verifyToken(jwtCookie);            
-            
-        } catch (IllegalStateException e) {
-            return ResponseUtils.status(Status.INTERNAL_SERVER_ERROR);
-        }        
+    public Response verify(@CookieParam("r_token") String jwtCookie) {        
+            return tokenService.verifyToken(jwtCookie);                           
     }
 
     private static void delayResponse() {
