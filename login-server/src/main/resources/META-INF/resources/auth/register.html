@@ -66,7 +66,7 @@
     const username = document.querySelector("form input[name=username]").value;
     const secret = document.querySelector("form input[name=password]").value;
     const credentials = { username, secret };
-    const response = await fetch("/auth/register", {
+    const response = await fetch("http://localhost:8086/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(credentials)

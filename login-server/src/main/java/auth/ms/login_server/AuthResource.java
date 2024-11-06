@@ -5,7 +5,6 @@ import java.util.Collections;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -24,9 +23,8 @@ import auth.ms.login_server.services.external.TokenService;
 import auth.ms.login_server.utils.PasswordHashUtils;
 import auth.ms.response_utils.ResponseUtils;
 import static auth.ms.server_timings.filter.AbstractServerTimingResponseFilter.SERVER_TIMING_HEADER_NAME;
-import io.quarkus.security.Authenticated;
 
-@Path("/auth")
+@Path("/api/auth")
 @Consumes(MediaType.APPLICATION_JSON)
 public class AuthResource {
 
@@ -126,10 +124,9 @@ public class AuthResource {
     }
 
 
-    @GET
-    @Path("/verifytest")
-    @Produces(MediaType.TEXT_PLAIN)
-    @Authenticated
+    @POST
+    @Path("/verify")
+    @Produces(MediaType.TEXT_PLAIN)    
     public Response verify(@CookieParam("r_token") String jwtCookie) {
         try {
             return tokenService.verifyToken(jwtCookie);            

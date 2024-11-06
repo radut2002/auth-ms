@@ -14,7 +14,7 @@ import auth.ms.credentials_store.domain.Credentials;
 
 import java.util.Set;
 
-@Path("/auth/credentials")
+@Path("/api/auth/credentials")
 @Produces(MediaType.TEXT_PLAIN)
 @Consumes(MediaType.TEXT_PLAIN)
 public class CredentialsStoreResource {

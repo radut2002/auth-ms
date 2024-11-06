@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response.Status;
 import static auth.ms.login_server.utils.TokenUtils.isUnauthorizedToChangeAdminOnlyData;
 import static auth.ms.server_timings.filter.AbstractServerTimingResponseFilter.SERVER_TIMING_HEADER_NAME;
 
-@Path("/auth")
+@Path("/api/auth")
 @Produces(MediaType.TEXT_PLAIN)
 @Consumes(MediaType.TEXT_PLAIN)
 public class DeleteCredentialsResource {

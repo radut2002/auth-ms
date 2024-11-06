@@ -29,7 +29,7 @@
         <version>1.0</version>
     </dependency>
 
-
+  
         <!--Gateway-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>

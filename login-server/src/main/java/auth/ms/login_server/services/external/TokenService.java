@@ -17,7 +17,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import auth.ms.login_server.domain.User;
 
-@Path("/auth")
+@Path("/api/auth")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Singleton
@@ -41,7 +41,7 @@ public interface TokenService {
     @Retry(maxRetries = 1, delay = 3000)
     Response removeTokens(@PathParam("userId") long userId);
 
-    @GET
+    @POST
     @Path("/verify")
     @Produces(MediaType.TEXT_PLAIN)
     @Retry(maxRetries = 1, delay = 3000)

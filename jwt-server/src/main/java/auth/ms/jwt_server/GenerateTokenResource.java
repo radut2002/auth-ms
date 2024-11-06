@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response.Status;
 import static auth.ms.jwt_server.utils.GenerateTokenUtils.EXPIRATION_REFRESH_TOKEN;
 import static auth.ms.server_timings.filter.AbstractServerTimingResponseFilter.SERVER_TIMING_HEADER_NAME;
 
-@Path("/auth/generate")
+@Path("/api/auth/generate")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class GenerateTokenResource {

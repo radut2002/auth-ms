@@ -1,0 +1,155 @@
+wsl --export docker-desktop "D:\Docker\wsl\data\docker-desktop.tar"
+wsl --unregister docker-desktop
+wsl --import docker-desktop "D:\Docker\wsl\data" "D:\Docker\wsl\data\docker-desktop.tar" --version 2
+C:\Users\Radu\AppData\Local\Docker\wsl
+https://github.com/EduardDopler/auth-ms.git
+git remote add origin https://github.com/radut2002/auth-ms.git
+Arrays.stream(req.getCookies())
+            .filter(c -> c.getName().equals(cookieName))
+            .findFirst()
+            .map(Cookie::getValue)
+            .orElse(null);
+			
+			 private String getAuthHeader(ServerHttpRequest request) {
+        var header = request.getHeaders().getOrEmpty("Authorization").get(0);
+        return header.replace(TOKEN_PREFIX,"").trim();
+    }
+	
+	private boolean isPrefixMissing(ServerHttpRequest request) {
+        var header = request.getHeaders().getFirst ("Authorization");
+        assert header != null;
+        return !header.startsWith(TOKEN_PREFIX);
+    }
+	if (this.isAuthMissing(request) || this.isPrefixMissing(request))
+                return this.onError(exchange, "Authorization header is missing in request", HttpStatus.UNAUTHORIZED);
+				
+				
+				@Bean
+    public WebClient getWebClient() throws SSLException {
+
+        ExchangeStrategies exchangeStrategies = ExchangeStrategies.builder()
+                .codecs(configurer -> configurer.defaultCodecs()
+                        .maxInMemorySize(1048576)) // Set buffer size to 1 MB
+                .build();
+
+        // Disable ssl verification
+        SslContext context = SslContextBuilder.forClient()
+                .trustManager(InsecureTrustManagerFactory.INSTANCE)
+                .build();
+
+        HttpClient httpClient = HttpClient.create()
+                .secure(t -> t.sslContext(context))
+                // .proxyWithSystemProperties() // Use JVM level System proxy
+                .responseTimeout(Duration.ofSeconds(30))
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 30 * 1000)
+                .doOnConnected(conn -> conn
+                        .addHandlerLast(new ReadTimeoutHandler(30,
+                                TimeUnit.SECONDS))
+                        .addHandlerLast(new WriteTimeoutHandler(30)));
+
+        ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
+
+        return WebClient
+                .builder()
+                .exchangeStrategies(exchangeStrategies)
+                .clientConnector(connector)
+                .build();
+    }
+	
+	 @Bean
+        public WebClient webClient() {
+            return WebClient.builder().baseUrl("http://localhost:8081").build();
+        }    
+
+
+bash build-microservices.sh package -Dquarkus.native.container-build=true -DskipTests
+"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJleHAiOjE3MzgxNTUzMDAsInVwbiI6IjIiLCJpc3MiOiJodHRwOi8vYXV0aC9tcy9qd3Qtc2VydmVyIiwic3ViIjoicnRvayIsImlhdCI6MTczMDM3OTMwMCwianRpIjoiclZBa0VBMU5mc0hITmlCLW9tMlpfUSJ9.MmKu4Ancr5BpYSNFk0p_Dhki18qA9CbKjt-brqWQAphMsY8hJHihH83RUlEVL3wBiMvdKTql42U3Bi5fgB3KeYr5hkmqiISzuxuf95LDy3NODT1MhRglXVJpYcep9Kv1Pf5OdmwtkpyGKSiJ20m-jXBAjJ-_qUSo1wL0ADzE9Kr4VRVz_lVfCYWbKYGXg2_fYd4enPoQjFCg5_2-Aitx5iYNI_agrPQldKBuxKqCkNquC9bfWf2XC2FKNn-qHeQv5RJ0Og1QyowKjWbzEssQpTlD40x7ImcVoD-x4gnHxC3qFoevad4yaIQNXC-hzC-daXFlJogmlfK6jza2Povipg=!ggggggg"
+
+
+public static final List<String> openApiEndpoints = List.of(
+            "/auth/register",
+            "/auth/verifyIdToken",
+            "/auth/login",
+            "/auth/refresh"
+    );
+
+
+package com.gateway.gateway_service.config;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.gateway.gateway_service.security.AuthenticationFilter;
+
+@Configuration
+public class GatewayConfig {
+
+    @Autowired
+    AuthenticationFilter authenticationFilter;
+
+    @Bean
+    public RouteLocator routes(RouteLocatorBuilder builder) {
+        return builder.routes()
+                .route("auth-service", r -> r.path("/auth/api/**")                        
+                        .filters(f -> f.filter(authenticationFilter))                        
+                        .uri("http://localhost:8080"))               
+                .build();
+    }
+
+}
+
+
+package com.gateway.gateway_service.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.gateway.gateway_service.controller.request.AuthenticationRequest;
+import com.gateway.gateway_service.services.AuthService;
+
+@RestController
+@RequestMapping("/auth")
+public class AuthController {
+
+    @Autowired
+    private  AuthService authService;
+
+    @PostMapping(value = "/rfegister")
+    public ResponseEntity<Void> registerUser( @RequestBody AuthenticationRequest request ) {
+        authService.register(request);
+        return null;
+    }
+
+    @GetMapping(value = "/vferify")
+    public ResponseEntity<Void> verify() {
+        authService.verify();
+        return null;
+    }
+}
+
+docker build -f "../credentials-store/src/main/docker/Dockerfile.jvm" -t credentials-store .
+docker build -f "../gateway_service/src/main/docker/Dockerfile.jvm" -t gateway-service .
+
+"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhdG9rIiwidXBuIjoiMSIsImdyb3VwcyI6W10sImlzcyI6Imh0dHA6Ly9hdXRoL21zL2p3dC1zZXJ2ZXIiLCJleHAiOjE3MzA0NzYyMjQsImlhdCI6MTczMDQ3NTMyNCwianRpIjoiTmRqVXg3RndxOUNBNENKYzg2RmVQZyJ9.izebIW_PE1SAxOvHdduJBw60h__U7uvW4v8PbmQoPVKY226_KrlnI_juKO3ZU_wwxHrzfWxvdy82RJXJBBocUMATGsXKbBoPU3buT8vLnfRh2T_g6j5soQ26D7mQeFyRSyHRGLYo2mo92Aoa0Ys1IHLsSp2SxfpmBxLn6kEvHCABSWU6jAVHMx8qQ8xxrpHoXX4VVJFjCVJGZ4GGiJiVqHbfTsAYev8kdnoXoaWDu6W7cfeZlLBTeglOcSfZf_QgjS4bhMRsI_2uBdVm8xHg_XEAQ2769ylN0WY8fVmubICj4UusAbBjvLFoO9bRyB11lKLsk-4vfMITv1Bg0DAuqA"
+
+
+C:\Program Files (x86)\Google\Chrome\Application\chrome.exe --disable-web-security --disable-gpu --disable-features=IsolateOrigins,site-per-process --user-data-dir=C://ChromeDev
+eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJhdG9rIiwidXBuIjoiMiIsImdyb3VwcyI6W10sImlzcyI6Imh0dHA6Ly9hdXRoL21zL2p3dC1zZXJ2ZXIiLCJleHAiOjE3MzA3MzcwMTQsImlhdCI6MTczMDczNjExNCwianRpIjoiM1NOQU5rbkd0bWZiS0g4S2p6QWJLQSJ9.odWOmM_gai6Pcpx3ZDRGjPvlR2sXSFd63JMNwct_z1qbyq2pFZvXo0kW83MZQXGkI8GuwzgYts2I-vIdl4vrSDMsJ_lJzX4bIIYQd1awwKX0ZaB_AoZETpN9ZHcIW9kLDy5j4OFi1wKhkPp64CMWjJ-hgixdrsi_116zMhlvtuZckB0Iu4HBfmypSyPaZ2bk6CcL-J-OvWwLqWc0_wP0c4wvYHs99wVfioP263xdisdmMp3xOdud5I4WEWo1Zg6NjaL0D5lcetUr5190iERtZKSVBa1P-xgwPSKRyGP6iwMWOfsySPlaOMelYbsewluF8gTvE3-g7SvtIbFDeg9tDA
+
+docker build -f "../login-server/src/main/docker/Dockerfile.native" -t --add-host=host.docker.internal:host-gateway login-server . 
+cookie-domain:localhost cookie-name:r_token 
+
+quarkus.http.cors=true
+quarkus.http.cors.origins=*
+quarkus.http.cors.headers=origin, accept, authorization, content-type, x-requested-with
+quarkus.http.cors.access-control-allow-credentials=true
+quarkus.http.cors.methods=GET, POST, PUT, DELETE, OPTIONS, HEAD
+quarkus.tls.trust-all=true

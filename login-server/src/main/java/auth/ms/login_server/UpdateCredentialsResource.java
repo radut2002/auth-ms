@@ -18,7 +18,7 @@ import static auth.ms.login_server.utils.TokenUtils.isUnauthorizedToChangeData;
 
 import java.util.Set;
 
-@Path("/auth")
+@Path("/api/auth")
 @Produces(MediaType.TEXT_PLAIN)
 @Consumes(MediaType.TEXT_PLAIN)
 public class UpdateCredentialsResource {

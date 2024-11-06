@@ -15,7 +15,7 @@ public final class GenerateTokenUtils {
     public static final int EXPIRATION_ACCESS_TOKEN = (int) Duration.ofMinutes(15).toSeconds();
     public static final int EXPIRATION_REFRESH_TOKEN = (int) Duration.ofDays(90).toSeconds();
 
-    public static final String ISSUER = "http://auth/ms/jwt-server";
+    public static final String ISSUER = "http://api/auth/ms/jwt-server";
     public static final String SUBJECT_ACCESS = "atok";
     public static final String SUBJECT_REFRESH = "rtok";
 
