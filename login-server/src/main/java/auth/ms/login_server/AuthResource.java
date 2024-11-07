@@ -126,7 +126,7 @@ public class AuthResource {
 
     @POST
     @Path("/verify")
-    @Produces(MediaType.TEXT_PLAIN)    
+    @Produces(MediaType.TEXT_PLAIN)   
     public Response verify(@CookieParam("r_token") String jwtCookie) {        
             return tokenService.verifyToken(jwtCookie);                           
     }

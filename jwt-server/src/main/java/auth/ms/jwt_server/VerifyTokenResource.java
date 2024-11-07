@@ -24,7 +24,6 @@ import auth.ms.jwt_server.utils.GenerateTokenUtils;
 import auth.ms.jwt_server.utils.RefreshTokenUtils;
 import auth.ms.response_utils.RefreshTokenCookie;
 import auth.ms.response_utils.ResponseUtils;
-import io.smallrye.jwt.auth.principal.JWTParser;
 
 import static auth.ms.jwt_server.utils.GenerateTokenUtils.EXPIRATION_REFRESH_TOKEN;
 import static auth.ms.server_timings.filter.AbstractServerTimingResponseFilter.SERVER_TIMING_HEADER_NAME;
