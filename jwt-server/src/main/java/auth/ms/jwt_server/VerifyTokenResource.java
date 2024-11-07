@@ -70,7 +70,8 @@ public class VerifyTokenResource {
                     "userId inside upn cannot be parsed");
         }
          
-        var groupsResponse = tokenStoreService.popGroups(userId, jwt.getRawToken());
+        var tokenHash = RefreshTokenUtils.toSha256Hash(jwt.getRawToken());
+        var groupsResponse = tokenStoreService.popGroups(userId, tokenHash);
         var timingGetGroups = groupsResponse.getHeaderString(SERVER_TIMING_HEADER_NAME);
 
         // if no groups were found (404), the JWT info was deleted inside the token store
@@ -84,8 +85,8 @@ public class VerifyTokenResource {
         if (groupsResponse.getStatusInfo().getFamily() == Status.Family.SERVER_ERROR) {
             return ResponseUtils.status(Status.INTERNAL_SERVER_ERROR);
         }
+        var groups = groupsResponse.readEntity(new GenericType<Set<String>>() {});
 
-         var groups = groupsResponse.readEntity(new GenericType<Set<String>>() {});
         var tokens = GenerateTokenUtils.generateJwtTokens(userId, groups);
         var newTokenHash = RefreshTokenUtils.toSha256Hash(tokens.refreshToken);
 

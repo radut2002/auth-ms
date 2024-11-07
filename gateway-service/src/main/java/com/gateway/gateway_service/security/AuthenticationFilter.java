@@ -36,11 +36,16 @@ public class AuthenticationFilter implements GatewayFilter {
                     .uri(AUTH_URI)
                     .headers((httpHeaders -> httpHeaders.putAll(exchange.getRequest().getHeaders())))
                     .retrieve()
-                    .onStatus(HttpStatus::isError, response -> {
-                        return Mono.defer(() -> setErrorResponse(exchange.getResponse()).setComplete().then(Mono.empty()));                        
-                    })                                     
-                    .bodyToMono(Void.class)
-                    .then(chain.filter(exchange));
+                    .onStatus(HttpStatus::is4xxClientError, response -> {
+                        return Mono.defer(() -> setErrorResponse(exchange.getResponse(), HttpStatus.UNAUTHORIZED).setComplete().then(Mono.empty()));                        
+                    })
+                    .onStatus(HttpStatus::is5xxServerError, response -> {
+                        return Mono.defer(() -> setErrorResponse(exchange.getResponse(), HttpStatus.INTERNAL_SERVER_ERROR).setComplete().then(Mono.empty()));                        
+                    })
+                    .onStatus(HttpStatus::is2xxSuccessful, response -> {
+                        return Mono.defer(() -> chain.filter(exchange)).then(Mono.empty());                       
+                    })
+                    .bodyToMono(Void.class);
                                                          
             } catch (Exception e) {
                 return this.onError(exchange, e.getLocalizedMessage(), HttpStatus.UNAUTHORIZED);
@@ -49,8 +54,8 @@ public class AuthenticationFilter implements GatewayFilter {
         return chain.filter(exchange);
     }
 
-    private ServerHttpResponse setErrorResponse(ServerHttpResponse serverHttpResponse) {
-        serverHttpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);        
+    private ServerHttpResponse setErrorResponse(ServerHttpResponse serverHttpResponse, HttpStatus status) {
+        serverHttpResponse.setStatusCode(status);        
         return serverHttpResponse;
     }
 
