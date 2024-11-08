@@ -61,10 +61,4 @@ public class WebClientConfig {
                 .clientConnector(connector)                
                 .build();
     }
-
-        
- /*    @Bean
-        public WebClient webClient() {
-            return WebClient.builder().build();
-        }   */
 }

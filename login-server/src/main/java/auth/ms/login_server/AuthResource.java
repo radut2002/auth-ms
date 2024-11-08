@@ -1,6 +1,7 @@
 package auth.ms.login_server;
 
 import java.util.Collections;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -66,6 +67,41 @@ public class AuthResource {
 
         // retrieve token
         var user = new User(id, Collections.emptySet());
+        var tokenResponse = tokenService.forUser(user);
+
+        if (tokenResponse.getStatusInfo().getFamily() != Status.Family.SUCCESSFUL) {
+            return ResponseUtils.fromResponse(tokenResponse,
+                    tokenResponse.getStatusInfo().toEnum());
+        }
+
+        return ResponseUtils.fromResponse(tokenResponse, Status.OK, timingCredentials);
+    }
+
+    @POST
+    @Path("/registeradmin")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response registeradmin(@QueryParam("no-login") boolean noLogin, Credentials credentials) {
+        if (credentials == null) {
+            return ResponseUtils.textResponse(Status.BAD_REQUEST, "body has to be non-null");
+        }
+
+        var hashedSecret = PasswordHashUtils.bcryptHash(credentials.secret);
+        var idResponse = credentialsStoreService.storeCredentials(
+                new Credentials(credentials.username, hashedSecret));
+        var timingCredentials = idResponse.getHeaderString(SERVER_TIMING_HEADER_NAME);
+
+        if (idResponse.getStatusInfo().getFamily() != Status.Family.SUCCESSFUL) {
+            return ResponseUtils.fromResponse(idResponse, idResponse.getStatusInfo().toEnum());
+        }
+
+        if (noLogin) {
+            return ResponseUtils.fromResponse(idResponse, Status.OK);
+        }
+        var idString = idResponse.readEntity(String.class);
+        var id = Long.parseLong(idString);
+
+        // retrieve token
+        var user = new User(id, Set.of("ROLE_ADMIN"));
         var tokenResponse = tokenService.forUser(user);
 
         if (tokenResponse.getStatusInfo().getFamily() != Status.Family.SUCCESSFUL) {

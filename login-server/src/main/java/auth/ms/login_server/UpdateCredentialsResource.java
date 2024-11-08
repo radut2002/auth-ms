@@ -1,23 +1,29 @@
 package auth.ms.login_server;
 
-import auth.ms.login_server.utils.PasswordHashUtils;
-import auth.ms.response_utils.ResponseUtils;
-import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
+import java.util.Set;
 
-import auth.ms.login_server.services.external.CredentialsStoreService;
-
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.CookieParam;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+import auth.ms.login_server.services.external.CredentialsStoreService;
+import auth.ms.login_server.utils.PasswordHashUtils;
 import static auth.ms.login_server.utils.TokenUtils.isUnauthorizedToChangeAdminOnlyData;
 import static auth.ms.login_server.utils.TokenUtils.isUnauthorizedToChangeData;
+import auth.ms.response_utils.ResponseUtils;
 
-import java.util.Set;
-
+@RequestScoped
 @Path("/api/auth")
 @Produces(MediaType.TEXT_PLAIN)
 @Consumes(MediaType.TEXT_PLAIN)
@@ -77,10 +83,11 @@ public class UpdateCredentialsResource {
     @PUT
     @Path("/{id}/groups")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateGroups(@PathParam("id") long id, Set<String> groups) {
+    public Response updateGroups(@CookieParam("r_token") String jwtCookie, @PathParam("id") long id, Set<String> groups) {
         if (groups == null) {
             return ResponseUtils.textResponse(Status.BAD_REQUEST, "body has to be non-null");
         }
+
         if (isUnauthorizedToChangeAdminOnlyData(jwt)) {
             return ResponseUtils.status(Status.FORBIDDEN);
         }

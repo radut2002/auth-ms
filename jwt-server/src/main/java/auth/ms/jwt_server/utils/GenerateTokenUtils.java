@@ -1,14 +1,15 @@
 package auth.ms.jwt_server.utils;
 
-import auth.ms.jwt_server.domain.JWTokens;
-import io.smallrye.jwt.build.Jwt;
-import org.eclipse.microprofile.jwt.Claims;
-
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Set;
+
+import org.eclipse.microprofile.jwt.Claims;
+
+import auth.ms.jwt_server.domain.JWTokens;
+import io.smallrye.jwt.build.Jwt;
 
 public final class GenerateTokenUtils {
 
@@ -24,7 +25,7 @@ public final class GenerateTokenUtils {
         var refreshExpiration = refreshTokenExpiration();
 
         var accessClaims = buildAccessClaims(userId, accessExpiration, groups);
-        var refreshClaims = buildRefreshClaims(userId, refreshExpiration);
+        var refreshClaims = buildRefreshClaims(userId, refreshExpiration, groups);
 
         var accessToken = Jwt.claims(accessClaims).sign();
         var refreshToken = Jwt.claims(refreshClaims).sign();
@@ -43,13 +44,14 @@ public final class GenerateTokenUtils {
         // @formatter:on
     }
 
-    private static Map<String, Object> buildRefreshClaims(long userId, long refreshExpiration) {
+    private static Map<String, Object> buildRefreshClaims(long userId, long refreshExpiration, Set<String> groups) {
         // @formatter:off
         return Map.of(
                 Claims.upn.name(), Long.toString(userId),
                 Claims.iss.name(), ISSUER,
                 Claims.sub.name(), SUBJECT_REFRESH,
-                Claims.exp.name(), refreshExpiration);
+                Claims.exp.name(), refreshExpiration,
+                Claims.groups.name(), groups);
         // @formatter:on
     }
 

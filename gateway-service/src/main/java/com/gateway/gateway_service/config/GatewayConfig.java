@@ -24,11 +24,10 @@ public class GatewayConfig {
     @Bean
     public RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route("auth-service", r -> r.path("/api/auth/**")
-                        .and().not(p -> p.path("/api/auth/customer/**"))                       
+                .route("auth-service", r -> r.path("/api/auth/**")                                           
                         .filters(f -> f.filter(authenticationFilter))                      
                         .uri(AUTH_URI))
-                .route("customer-service", r -> r.path("/api/auth/customer/**")                       
+                .route("customer-service", r -> r.path("/api/customer/**")                       
                         .filters(f -> f.filter(authenticationFilter))                      
                         .uri(CUSTOMER_URI))
                         .build();           

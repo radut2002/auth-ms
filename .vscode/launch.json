@@ -7,13 +7,6 @@
 
         {
             "type": "java",
-            "name": "Attach login server local",
-            "request": "attach",
-            "hostName": "localhost",
-            "port": "5007"
-        },
-        {
-            "type": "java",
             "name": "Debugging docker login server",
             "request": "attach",
             "hostName": "localhost",
