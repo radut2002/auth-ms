@@ -1,18 +1,24 @@
 package auth.ms.credentials_store;
 
-import auth.ms.response_utils.ResponseUtils;
-import io.quarkus.runtime.StartupEvent;
+import java.util.Set;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import auth.ms.credentials_store.domain.Credentials;
-
-import java.util.Set;
+import auth.ms.response_utils.ResponseUtils;
+import io.quarkus.runtime.StartupEvent;
 
 @Path("/api/auth/credentials")
 @Produces(MediaType.TEXT_PLAIN)
@@ -122,6 +128,7 @@ public class CredentialsStoreResource {
 
     @PUT
     @Path("/{id}/groups")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response updateGroups(@PathParam("id") long id, Set<String> newGroups) {
         if (newGroups == null) {
             return ResponseUtils.textResponse(Status.BAD_REQUEST, "body has to be non-null");
