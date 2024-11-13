@@ -32,7 +32,7 @@ public class AuthenticationFilter implements GatewayFilter {
         ServerHttpRequest request = exchange.getRequest();
         if (routerValidator.isSecured.test(request)) {
             try {
-                    return webClient.post()
+                    return webClient.get()
                     .uri(AUTH_URI)
                     .headers((httpHeaders -> httpHeaders.putAll(exchange.getRequest().getHeaders())))
                     .retrieve()

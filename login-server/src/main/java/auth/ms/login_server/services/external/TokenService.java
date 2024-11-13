@@ -41,7 +41,7 @@ public interface TokenService {
     @Retry(maxRetries = 1, delay = 3000)
     Response removeTokens(@PathParam("userId") long userId);
 
-    @POST
+    @GET
     @Path("/verify")
     @Produces(MediaType.TEXT_PLAIN)
     @Retry(maxRetries = 1, delay = 3000)

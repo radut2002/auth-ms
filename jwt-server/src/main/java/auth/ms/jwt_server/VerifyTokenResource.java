@@ -5,9 +5,10 @@ import java.util.Set;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -21,20 +22,19 @@ import auth.ms.jwt_server.domain.JwtResponse;
 import auth.ms.jwt_server.domain.TokenData;
 import auth.ms.jwt_server.services.external.TokenStoreService;
 import auth.ms.jwt_server.utils.GenerateTokenUtils;
+import static auth.ms.jwt_server.utils.GenerateTokenUtils.EXPIRATION_REFRESH_TOKEN;
 import auth.ms.jwt_server.utils.RefreshTokenUtils;
 import auth.ms.response_utils.RefreshTokenCookie;
 import auth.ms.response_utils.ResponseUtils;
-
-import static auth.ms.jwt_server.utils.GenerateTokenUtils.EXPIRATION_REFRESH_TOKEN;
 import static auth.ms.server_timings.filter.AbstractServerTimingResponseFilter.SERVER_TIMING_HEADER_NAME;
+import io.quarkus.security.identity.SecurityIdentity;
 
 @RequestScoped
 @Path("/api/auth/verify")
 @Produces(MediaType.TEXT_PLAIN)
 @Consumes(MediaType.TEXT_PLAIN)
 public class VerifyTokenResource {
-      
-    
+          
     @ConfigProperty(name = "mp.jwt.verify.issuer")
     String issuer;
     
@@ -48,9 +48,9 @@ public class VerifyTokenResource {
         this.tokenStoreService = tokenStoreService;
     }
 
-    @POST
-    public Response verifyToken()  {      
-          if (jwt == null || jwt.getName() == null) {
+    @GET
+    public Response verifyToken(@Context SecurityIdentity ctx)  {    
+         if (jwt == null || jwt.getName() == null) {
             return ResponseUtils.textResponse(Status.BAD_REQUEST, "invalid token");
         }
         if (!GenerateTokenUtils.SUBJECT_REFRESH.equals(jwt.getSubject())) {

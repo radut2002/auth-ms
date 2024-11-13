@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -160,7 +161,7 @@ public class AuthResource {
     }
 
 
-    @POST
+    @GET
     @Path("/verify")
     @Produces(MediaType.TEXT_PLAIN)   
     public Response verify(@CookieParam("r_token") String jwtCookie) {        
