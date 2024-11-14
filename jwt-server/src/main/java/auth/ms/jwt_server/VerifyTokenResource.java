@@ -28,6 +28,10 @@ import auth.ms.response_utils.RefreshTokenCookie;
 import auth.ms.response_utils.ResponseUtils;
 import static auth.ms.server_timings.filter.AbstractServerTimingResponseFilter.SERVER_TIMING_HEADER_NAME;
 import io.quarkus.security.identity.SecurityIdentity;
+import io.smallrye.jwt.auth.principal.JWTParser;
+import io.smallrye.jwt.auth.principal.ParseException;
+
+
 
 @RequestScoped
 @Path("/api/auth/verify")
@@ -41,6 +45,8 @@ public class VerifyTokenResource {
     private final JsonWebToken jwt;
     private final TokenStoreService tokenStoreService;
 
+    @Inject JWTParser parser;
+
     @SuppressWarnings("CdiInjectionPointsInspection")
     @Inject
     public VerifyTokenResource(JsonWebToken jwt, @RestClient TokenStoreService tokenStoreService) {
@@ -49,8 +55,22 @@ public class VerifyTokenResource {
     }
 
     @GET
-    public Response verifyToken(@Context SecurityIdentity ctx)  {    
-         if (jwt == null || jwt.getName() == null) {
+    public Response verifyToken(@Context SecurityIdentity ctx)  {   
+        
+        System.out.print(jwt.getRawToken());
+
+        JsonWebToken token;
+        try {
+            token = parser.parse(jwt.getRawToken());            
+            System.out.print(token.getIssuer());
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        
+
+        if (jwt == null || jwt.getName() == null) {
             return ResponseUtils.textResponse(Status.BAD_REQUEST, "invalid token");
         }
         if (!GenerateTokenUtils.SUBJECT_REFRESH.equals(jwt.getSubject())) {

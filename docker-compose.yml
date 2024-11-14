@@ -11,7 +11,7 @@ services:
       - "host.docker.internal:172.18.0.6" 
     ports:
       - "8080:8080"
-      - "5005:5005"
+      - "5010:5010"
     depends_on:
       - jwt-server
       - credentials-store

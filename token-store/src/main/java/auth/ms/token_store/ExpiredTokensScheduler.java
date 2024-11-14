@@ -1,12 +1,14 @@
 package auth.ms.token_store;
 
-import io.quarkus.scheduler.Scheduled;
-import org.jboss.logging.Logger;
+import java.time.Duration;
+import java.time.Instant;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.time.Duration;
-import java.time.Instant;
+
+import org.jboss.logging.Logger;
+
+import io.quarkus.scheduler.Scheduled;
 
 @ApplicationScoped
 public class ExpiredTokensScheduler {
@@ -22,8 +24,8 @@ public class ExpiredTokensScheduler {
         this.tokenStoreService = tokenStoreService;
     }
 
-    @Scheduled(every = "5m", delayed = "1m")
-    void deleteExpiredTokens() {
+    @Scheduled(every = "3m", delayed = "1m")
+    public void deleteExpiredTokens() {
         var startInstant = Instant.now();
         var count = tokenStoreService.deleteExpired();
         var duration = Duration.between(startInstant, Instant.now());

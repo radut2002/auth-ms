@@ -1,15 +1,23 @@
 package auth.ms.token_store;
 
-import auth.ms.response_utils.ResponseUtils;
-import auth.ms.token_store.domain.TokenData;
-import io.quarkus.runtime.StartupEvent;
-
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import auth.ms.response_utils.ResponseUtils;
+import auth.ms.token_store.domain.TokenData;
+import io.quarkus.runtime.StartupEvent;
 
 @Path("/api/auth/tokens")
 @Produces(MediaType.TEXT_PLAIN)
@@ -17,10 +25,12 @@ import javax.ws.rs.core.Response.Status;
 public class TokenStoreResource {
 
     private final TokenStoreService tokenStoreService;
+    private final ExpiredTokensScheduler expiredTokensScheduler;
 
     @Inject
     public TokenStoreResource(TokenStoreService tokenStoreService) {
         this.tokenStoreService = tokenStoreService;
+        this.expiredTokensScheduler = null;
     }
 
     void onStart(@Observes StartupEvent ev) {
@@ -97,5 +107,16 @@ public class TokenStoreResource {
             return ResponseUtils.status(Status.INTERNAL_SERVER_ERROR);
         }
         return ResponseUtils.textResponse(Status.OK, String.valueOf(deleted));
+    }
+
+    @GET
+    @Path("/expiredTokens")
+    public Response deleteExpiredTokens() {        
+        try {
+            expiredTokensScheduler.deleteExpiredTokens();
+        } catch (IllegalStateException e) {
+            return ResponseUtils.status(Status.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseUtils.textResponse(Status.OK, "deleteExpiredTokens");
     }
 }

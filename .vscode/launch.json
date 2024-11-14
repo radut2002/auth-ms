@@ -10,7 +10,7 @@
             "name": "Debugging docker login server",
             "request": "attach",
             "hostName": "localhost",
-            "port": "5005",
+            "port": "5010",
         },
         {
             "type": "java",
@@ -25,20 +25,27 @@
             "request": "attach",
             "hostName": "localhost",
             "port": "5007",
-        }
-        ,
+        },        
         {
             "type": "java",
             "name": "Debugging docker gateway service",
             "request": "attach",
             "hostName": "localhost",
             "port": "5008",
+        },               
+        {
+            "type": "java",
+            "name": "Debugging docker token service",
+            "request": "attach",
+            "hostName": "localhost",
+            "port": "5009",
         }
     ],
     "compounds": [
      {
          "name": "Compound",
-         "configurations": ["Debugging docker login server","Debugging docker credential store", "Debugging docker jwt server", "Debugging docker gateway service"]
+         "configurations": ["Debugging docker login server","Debugging docker credential store", 
+         "Debugging docker jwt server", "Debugging docker gateway service", "Debugging docker token service"]
      }
  ]
 }
