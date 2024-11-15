@@ -3,7 +3,6 @@ package auth.ms.login_server.services.external;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -46,7 +45,7 @@ public interface TokenService {
     @Path("/verify")
     @Produces(MediaType.TEXT_PLAIN)
     @Retry(maxRetries = 1, delay = 3000)
-    Response verifyToken(@HeaderParam("Authorization") String token);
+    Response verifyToken(@CookieParam("r_token") String cookie);
 
     @GET   
     @Path("/expiredTokens") 

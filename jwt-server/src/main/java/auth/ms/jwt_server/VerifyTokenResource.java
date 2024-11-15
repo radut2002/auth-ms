@@ -1,6 +1,5 @@
 package auth.ms.jwt_server;
 
-import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -9,24 +8,17 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import auth.ms.jwt_server.domain.JwtResponse;
-import auth.ms.jwt_server.domain.TokenData;
 import auth.ms.jwt_server.services.external.TokenStoreService;
 import auth.ms.jwt_server.utils.GenerateTokenUtils;
-import static auth.ms.jwt_server.utils.GenerateTokenUtils.EXPIRATION_REFRESH_TOKEN;
-import auth.ms.jwt_server.utils.RefreshTokenUtils;
 import auth.ms.response_utils.RefreshTokenCookie;
 import auth.ms.response_utils.ResponseUtils;
-import static auth.ms.server_timings.filter.AbstractServerTimingResponseFilter.SERVER_TIMING_HEADER_NAME;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.smallrye.jwt.auth.principal.JWTParser;
 import io.smallrye.jwt.auth.principal.ParseException;
@@ -37,15 +29,16 @@ import io.smallrye.jwt.auth.principal.ParseException;
 @Path("/api/auth/verify")
 @Produces(MediaType.TEXT_PLAIN)
 @Consumes(MediaType.TEXT_PLAIN)
-public class VerifyTokenResource {
-          
-    @ConfigProperty(name = "mp.jwt.verify.issuer")
-    String issuer;
-    
-    private final JsonWebToken jwt;
+public class VerifyTokenResource {             
+
+    @RestClient
+    @Inject
     private final TokenStoreService tokenStoreService;
 
-    @Inject JWTParser parser;
+    @Inject 
+    JWTParser parser;
+
+    private final JsonWebToken jwt;
 
     @SuppressWarnings("CdiInjectionPointsInspection")
     @Inject
@@ -55,32 +48,21 @@ public class VerifyTokenResource {
     }
 
     @GET
-    public Response verifyToken(@Context SecurityIdentity ctx)  {   
-        
-        System.out.print(jwt.getRawToken());
-
-        JsonWebToken token;
-        try {
-            token = parser.parse(jwt.getRawToken());            
-            System.out.print(token.getIssuer());
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-        
-
-        if (jwt == null || jwt.getName() == null) {
+    public Response verifyToken(@Context SecurityIdentity ctx)  {          
+        if (jwt == null) {
             return ResponseUtils.textResponse(Status.BAD_REQUEST, "invalid token");
         }
+
         if (!GenerateTokenUtils.SUBJECT_REFRESH.equals(jwt.getSubject())) {
             return ResponseUtils.textResponse(Status.BAD_REQUEST, "invalid subject");
         }
 
-        if (!issuer.equals(jwt.getIssuer())) {
-            return ResponseUtils.textResponse(Status.BAD_REQUEST, "invalid issuer");
+        try {
+            parser.parse(jwt.getRawToken());            
+        } catch (ParseException e) {
+            return ResponseUtils.textResponse(Status.BAD_REQUEST, String.format("invalid token :%s", e.getMessage()));
         }
-
+        
         long userId;
         try {
             userId = Long.parseLong(jwt.getName());
@@ -89,9 +71,8 @@ public class VerifyTokenResource {
                     "userId inside upn cannot be parsed");
         }
          
-        var tokenHash = RefreshTokenUtils.toSha256Hash(jwt.getRawToken());
-        var groupsResponse = tokenStoreService.popGroups(userId, tokenHash);
-        var timingGetGroups = groupsResponse.getHeaderString(SERVER_TIMING_HEADER_NAME);
+        //var tokenHash = RefreshTokenUtils.toSha256Hash(jwt.getRawToken());
+        var groupsResponse = tokenStoreService.popGroups(userId, jwt.getRawToken());
 
         // if no groups were found (404), the JWT info was deleted inside the token store
         // (e.g. because it expired)
@@ -103,20 +84,8 @@ public class VerifyTokenResource {
         }
         if (groupsResponse.getStatusInfo().getFamily() == Status.Family.SERVER_ERROR) {
             return ResponseUtils.status(Status.INTERNAL_SERVER_ERROR);
-        }
-        var groups = groupsResponse.readEntity(new GenericType<Set<String>>() {});
-
-        var tokens = GenerateTokenUtils.generateJwtTokens(userId, groups);
-        var newTokenHash = RefreshTokenUtils.toSha256Hash(tokens.refreshToken);
-
-        var tokenData = new TokenData(userId, newTokenHash, groups, tokens.refreshTokenExpiresAt);
-        var storedTokenResponse = tokenStoreService.store(tokenData);
-        var timingStoreToken = storedTokenResponse.getHeaderString(SERVER_TIMING_HEADER_NAME);
-
-        var cookie = new RefreshTokenCookie(tokens.refreshToken, EXPIRATION_REFRESH_TOKEN);
-        var jwtResponse = new JwtResponse(userId, tokens.accessToken, tokens.accessTokenExpiresAt);
-
-        return ResponseUtils.jsonResponse(Status.OK, jwtResponse, cookie, timingGetGroups,
-                timingStoreToken);
+        }   
+        
+        return ResponseUtils.status(Status.OK);
     }
 }

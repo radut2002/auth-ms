@@ -1,13 +1,11 @@
 package auth.ms.login_server;
 
-import java.util.Collections;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -68,7 +66,7 @@ public class AuthResource {
         var id = Long.parseLong(idString);
 
         // retrieve token
-        var user = new User(id, Collections.emptySet());
+        var user = new User(id, Set.of("ROLE_USER"));
         var tokenResponse = tokenService.forUser(user);
 
         if (tokenResponse.getStatusInfo().getFamily() != Status.Family.SUCCESSFUL) {
@@ -165,7 +163,7 @@ public class AuthResource {
     @GET
     @Path("/verify")
     @Produces(MediaType.TEXT_PLAIN)   
-    public Response verify(@HeaderParam("Authorization") String jwtCookie) {        
+    public Response verify(@CookieParam("r_token") String jwtCookie) {        
             return tokenService.verifyToken(jwtCookie);                           
     }
 
