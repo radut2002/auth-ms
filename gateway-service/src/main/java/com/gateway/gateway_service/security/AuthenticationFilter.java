@@ -31,13 +31,16 @@ public class AuthenticationFilter implements GatewayFilter {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         if (routerValidator.isSecured.test(request)) {
-            try {
+              try {
                     return webClient.get()
                     .uri(AUTH_URI)
                     .headers((httpHeaders -> httpHeaders.putAll(exchange.getRequest().getHeaders())))
                     .retrieve()
                     .onStatus(HttpStatus::is4xxClientError, response -> {
-                        return Mono.defer(() -> setErrorResponse(exchange.getResponse(), HttpStatus.UNAUTHORIZED).setComplete().then(Mono.empty()));                        
+                        if (response.statusCode()== HttpStatus.EXPECTATION_FAILED) {
+                            return Mono.defer(() -> setErrorResponse(exchange.getResponse(), HttpStatus.UNAUTHORIZED).setComplete().then(Mono.empty()));
+                        }
+                        return Mono.defer(() -> setErrorResponse(exchange.getResponse(), HttpStatus.FORBIDDEN).setComplete().then(Mono.empty()));                        
                     })
                     .onStatus(HttpStatus::is5xxServerError, response -> {
                         return Mono.defer(() -> setErrorResponse(exchange.getResponse(), HttpStatus.INTERNAL_SERVER_ERROR).setComplete().then(Mono.empty()));                        
@@ -49,7 +52,8 @@ public class AuthenticationFilter implements GatewayFilter {
                                                          
             } catch (Exception e) {
                 return this.onError(exchange, e.getLocalizedMessage(), HttpStatus.UNAUTHORIZED);
-            }
+            } 
+                                                     
         }
         return chain.filter(exchange);
     }

@@ -5,6 +5,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -45,7 +46,7 @@ public interface TokenService {
     @Path("/verify")
     @Produces(MediaType.TEXT_PLAIN)
     @Retry(maxRetries = 1, delay = 3000)
-    Response verifyToken(@CookieParam("r_token") String cookie);
+    Response verifyToken(@HeaderParam("Authorization") String token);
 
     @GET   
     @Path("/expiredTokens") 
