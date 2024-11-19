@@ -20,7 +20,7 @@ import auth.ms.credentials_store.domain.Credentials;
 import auth.ms.response_utils.ResponseUtils;
 import io.quarkus.runtime.StartupEvent;
 
-@Path("/api/auth/credentials")
+@Path("/auth/credentials")
 @Produces(MediaType.TEXT_PLAIN)
 @Consumes(MediaType.TEXT_PLAIN)
 public class CredentialsStoreResource {

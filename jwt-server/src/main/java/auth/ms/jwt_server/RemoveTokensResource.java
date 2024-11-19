@@ -1,16 +1,21 @@
 package auth.ms.jwt_server;
 
-import auth.ms.jwt_server.services.external.TokenStoreService;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+import auth.ms.jwt_server.services.external.TokenStoreService;
+
 @RequestScoped
-@Path("/api/auth/remove")
+@Path("/auth/remove")
 @Produces(MediaType.TEXT_PLAIN)
 @Consumes(MediaType.TEXT_PLAIN)
 public class RemoveTokensResource {

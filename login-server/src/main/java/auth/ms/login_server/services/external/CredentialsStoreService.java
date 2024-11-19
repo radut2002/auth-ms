@@ -19,7 +19,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import auth.ms.login_server.domain.Credentials;
 
-@Path("/api/auth/credentials")
+@Path("/auth/credentials")
 @Produces(MediaType.TEXT_PLAIN)
 @Consumes(MediaType.TEXT_PLAIN)
 @Singleton

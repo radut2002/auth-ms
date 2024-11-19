@@ -1,22 +1,25 @@
 package auth.ms.login_server;
 
-import auth.ms.login_server.services.external.TokenService;
-import auth.ms.response_utils.ResponseUtils;
-import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-
-import auth.ms.login_server.services.external.CredentialsStoreService;
-
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+import auth.ms.login_server.services.external.CredentialsStoreService;
+import auth.ms.login_server.services.external.TokenService;
 import static auth.ms.login_server.utils.TokenUtils.isUnauthorizedToChangeAdminOnlyData;
+import auth.ms.response_utils.ResponseUtils;
 import static auth.ms.server_timings.filter.AbstractServerTimingResponseFilter.SERVER_TIMING_HEADER_NAME;
 
-@Path("/api/auth")
+@Path("/auth")
 @Produces(MediaType.TEXT_PLAIN)
 @Consumes(MediaType.TEXT_PLAIN)
 public class DeleteCredentialsResource {

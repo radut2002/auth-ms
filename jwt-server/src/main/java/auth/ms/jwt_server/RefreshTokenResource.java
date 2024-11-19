@@ -27,7 +27,7 @@ import static auth.ms.jwt_server.utils.GenerateTokenUtils.EXPIRATION_REFRESH_TOK
 import static auth.ms.server_timings.filter.AbstractServerTimingResponseFilter.SERVER_TIMING_HEADER_NAME;
 
 @RequestScoped
-@Path("/api/auth/refresh")
+@Path("/auth/refresh")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class RefreshTokenResource {

@@ -22,7 +22,7 @@ import auth.ms.response_utils.RefreshTokenCookie;
 import auth.ms.response_utils.ResponseUtils;
 import static auth.ms.server_timings.filter.AbstractServerTimingResponseFilter.SERVER_TIMING_HEADER_NAME;
 
-@Path("/api/auth/generate")
+@Path("/auth/generate")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class GenerateTokenResource {

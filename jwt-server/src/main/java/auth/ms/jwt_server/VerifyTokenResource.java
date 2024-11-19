@@ -20,7 +20,7 @@ import io.smallrye.jwt.auth.principal.JWTParser;
 import io.smallrye.jwt.auth.principal.ParseException;
 
 @RequestScoped
-@Path("/api/auth/verify")
+@Path("/auth/verify")
 @Produces(MediaType.TEXT_PLAIN)
 @Consumes(MediaType.TEXT_PLAIN)
 public class VerifyTokenResource {             

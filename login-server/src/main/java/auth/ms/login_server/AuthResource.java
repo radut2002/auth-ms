@@ -26,7 +26,7 @@ import auth.ms.login_server.utils.PasswordHashUtils;
 import auth.ms.response_utils.ResponseUtils;
 import static auth.ms.server_timings.filter.AbstractServerTimingResponseFilter.SERVER_TIMING_HEADER_NAME;
 
-@Path("/api/auth")
+@Path("/auth")
 @Consumes(MediaType.APPLICATION_JSON)
 public class AuthResource {
 

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class RouterValidator {
 
     public static final List<String> openApiEndpoints = List.of(            
-            "/api/auth/"
+            "/auth/"
 
     );
 

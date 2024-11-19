@@ -24,7 +24,7 @@ import static auth.ms.login_server.utils.TokenUtils.isUnauthorizedToChangeData;
 import auth.ms.response_utils.ResponseUtils;
 
 @RequestScoped
-@Path("/api/auth")
+@Path("/auth")
 @Produces(MediaType.TEXT_PLAIN)
 @Consumes(MediaType.TEXT_PLAIN)
 public class UpdateCredentialsResource {

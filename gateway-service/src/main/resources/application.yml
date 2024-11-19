@@ -13,7 +13,7 @@ spring:
         locator:
           enabled: true
 auth:
-  uri: /api/auth/verify
+  uri: /auth/verify
   baseuri: http://localhost:8082
 customer:
   uri: http://localhost:8087

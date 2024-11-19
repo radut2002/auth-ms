@@ -19,7 +19,7 @@ import auth.ms.response_utils.ResponseUtils;
 import auth.ms.token_store.domain.TokenData;
 import io.quarkus.runtime.StartupEvent;
 
-@Path("/api/auth/tokens")
+@Path("/auth/tokens")
 @Produces(MediaType.TEXT_PLAIN)
 @Consumes(MediaType.TEXT_PLAIN)
 public class TokenStoreResource {

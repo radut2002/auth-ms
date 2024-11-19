@@ -18,7 +18,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import auth.ms.login_server.domain.User;
 
-@Path("/api/auth")
+@Path("/auth")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Singleton
