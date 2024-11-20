@@ -1,15 +1,6 @@
 package auth.ms.jwt_server;
 
-import auth.ms.jwt_server.services.external.TokenStoreService;
-import auth.ms.jwt_server.utils.GenerateTokenUtils;
-import auth.ms.response_utils.ResponseUtils;
-import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-
-import auth.ms.jwt_server.domain.JwtResponse;
-import auth.ms.jwt_server.domain.TokenData;
-import auth.ms.jwt_server.utils.RefreshTokenUtils;
-import auth.ms.response_utils.RefreshTokenCookie;
+import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -21,9 +12,18 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.util.Set;
 
+import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+import auth.ms.jwt_server.domain.JwtResponse;
+import auth.ms.jwt_server.domain.TokenData;
+import auth.ms.jwt_server.services.external.TokenStoreService;
+import auth.ms.jwt_server.utils.GenerateTokenUtils;
 import static auth.ms.jwt_server.utils.GenerateTokenUtils.EXPIRATION_REFRESH_TOKEN;
+import auth.ms.jwt_server.utils.RefreshTokenUtils;
+import auth.ms.response_utils.RefreshTokenCookie;
+import auth.ms.response_utils.ResponseUtils;
 import static auth.ms.server_timings.filter.AbstractServerTimingResponseFilter.SERVER_TIMING_HEADER_NAME;
 
 @RequestScoped
@@ -84,7 +84,7 @@ public class RefreshTokenResource {
         var timingStoreToken = storedTokenResponse.getHeaderString(SERVER_TIMING_HEADER_NAME);
 
         var cookie = new RefreshTokenCookie(tokens.refreshToken, EXPIRATION_REFRESH_TOKEN);
-        var jwtResponse = new JwtResponse(userId, tokens.accessToken, tokens.accessTokenExpiresAt);
+        var jwtResponse = new JwtResponse(userId, tokens.accessToken, tokens.accessTokenExpiresAt, groups);
 
         return ResponseUtils.jsonResponse(Status.OK, jwtResponse, cookie, timingGetGroups,
                 timingStoreToken);

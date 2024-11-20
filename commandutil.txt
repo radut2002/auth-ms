@@ -153,3 +153,4 @@ quarkus.http.cors.headers=origin, accept, authorization, content-type, x-request
 quarkus.http.cors.access-control-allow-credentials=true
 quarkus.http.cors.methods=GET, POST, PUT, DELETE, OPTIONS, HEAD
 quarkus.tls.trust-all=true
+ALTER SEQUENCE SEQ_ID RESTART WITH 1
