@@ -46,7 +46,13 @@ public class AuthenticationFilter implements GatewayFilter {
                         return Mono.defer(() -> setErrorResponse(exchange.getResponse(), HttpStatus.INTERNAL_SERVER_ERROR).setComplete().then(Mono.empty()));                        
                     })
                     .onStatus(HttpStatus::is2xxSuccessful, response -> {
-                        return Mono.defer(() -> chain.filter(exchange)).then(Mono.empty());                       
+                        return response.bodyToMono(String.class)
+                        .flatMap(user-> { 
+                            System.out.print(user);
+                            exchange.getRequest().mutate()
+                            .header("X-User", user);
+                            return Mono.defer(() -> chain.filter(exchange)).then(Mono.empty()); 
+                        });
                     })
                     .bodyToMono(Void.class);
                                                          

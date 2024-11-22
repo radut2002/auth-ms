@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
+import auth.ms.jwt_server.domain.User;
 import auth.ms.jwt_server.utils.GenerateTokenUtils;
 import auth.ms.response_utils.ResponseUtils;
 import io.quarkus.security.AuthenticationFailedException;
@@ -53,13 +54,16 @@ public class VerifyTokenResource {
             return ResponseUtils.textResponse(Status.BAD_REQUEST, "invalid subject");
         }
         
+        long userId;
         try {
-            long userId = Long.parseLong(token.getName());
+            userId = Long.parseLong(token.getName());
         } catch (NumberFormatException e) {
             return ResponseUtils.textResponse(Status.BAD_REQUEST,
                     "userId inside upn cannot be parsed");
         }                
         
-        return ResponseUtils.status(Status.OK);
+        var user= new User(userId, token.getGroups());
+
+        return ResponseUtils.textResponse(Status.OK, user.toString());
     }
 }
