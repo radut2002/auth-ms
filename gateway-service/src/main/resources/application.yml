@@ -1,0 +1,19 @@
+server:
+  port: 8086
+
+jwt:
+  prefix: r_token
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+auth:
+  uri: /auth/verify
+  baseuri: http://localhost:8082
+customer:
+  uri: http://localhost:8087

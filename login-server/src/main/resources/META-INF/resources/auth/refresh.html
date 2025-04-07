@@ -55,8 +55,8 @@
   document.querySelector("form").addEventListener("submit", async (event) => {
     event.preventDefault();
     submitButton.disabled = true;
-    const response = await fetch("/auth/refresh", {
-      method: "POST",
+    const response = await fetch("http://localhost:8086/api/auth/customer/hello", {
+      method: "GET",
       headers: { "Content-Type": "application/json" }
     });
     if (!response.ok) {

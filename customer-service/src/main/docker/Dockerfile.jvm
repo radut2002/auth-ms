@@ -1,0 +1,10 @@
+FROM openjdk:17-jdk-slim
+WORKDIR /work/
+COPY target/*.jar /work/application.jar
+ENV JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009"
+RUN chmod 775 /work
+EXPOSE 8086
+CMD ["java", \   
+    "-jar", \
+    "./application.jar" \
+]

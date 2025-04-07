@@ -39,7 +39,7 @@
     </dependencies>
   </dependencyManagement>
 
-  <dependencies>
+  <dependencies> 
     <!-- WS/RS -->
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -64,7 +64,7 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-smallrye-jwt</artifactId>
     </dependency>
-    <!-- annotations -->
+     <!-- annotations -->
     <dependency>
       <groupId>org.eclipse.jdt</groupId>
       <artifactId>org.eclipse.jdt.annotation</artifactId>
