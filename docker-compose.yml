@@ -10,7 +10,7 @@ services:
     extra_hosts:
       - "host.docker.internal:172.18.0.6" 
     ports:
-      - "8080:8080"
+      - "8082:8082"
       - "5010:5010"
     depends_on:
       - jwt-server

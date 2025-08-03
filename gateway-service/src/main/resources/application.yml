@@ -17,3 +17,6 @@ auth:
   baseuri: http://localhost:8082
 customer:
   uri: http://localhost:8087
+  # For Docker
+  # baseuri: http://login-server:8082
+  # uri: http://customer-service:8087
